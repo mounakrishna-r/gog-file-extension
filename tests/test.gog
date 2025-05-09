@@ -1,0 +1,54 @@
+meta:
+  version: '0.1'
+  title: Global warming summary
+  author: ISSO HIGH
+  created: '2025-05-09'
+  gpt_engine: gpt-3.5-turbo
+prompt:
+  context: I am a kindergarten student. I want to understand global warming and its
+    trend with past and present years
+  tone: casual
+  audience: All my kindergarten school friends
+  format: sections+bullets
+render:
+  layout: A4
+  font: Arial
+  font_size: '12'
+  margin: lin
+  include_headings: true
+content:
+  generated: true
+  value: '**Global Warming - Easy Peasy for Kindergarten Kids!**
+
+
+    Hello friends! Today we''re going to talk about something very important - global
+    warming. It''s like when the Earth gets too hot because of all the things we do.
+    Let''s learn more about it in a fun way!
+
+
+    **What is Global Warming?**
+
+    - Global warming is when the Earth''s temperature goes up because of things like
+    pollution and cutting down trees.
+
+    - It makes the Earth hotter, which can cause problems for animals and plants.
+
+
+    **How Has Global Warming Changed Over the Years?**
+
+    - In the past, the Earth was cooler and animals and plants were happier.
+
+    - But now, because of what people are doing, the Earth is getting hotter and it''s
+    not good for anyone.
+
+
+    **What Can We Do to Help?**
+
+    - We can plant trees to help cool down the Earth.
+
+    - We can recycle our toys and use less plastic to reduce pollution.
+
+
+    Remember, even though global warming is a big problem, we can all do our part
+    to help make the Earth a better place for everyone. Let''s be kind to our planet
+    and each other!'

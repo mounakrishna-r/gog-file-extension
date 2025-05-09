@@ -1,5 +1,5 @@
 from openai import OpenAI
-from prompt_formatter import format_prompt
+from .prompt_formatter import format_prompt
 
 def generate_content(api_key, parsed):
     client = OpenAI(api_key=api_key)
