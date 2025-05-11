@@ -1,151 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
     <title>GOG Studio</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; }
         form { display: flex; flex-direction: column; gap: 20px; }
-
-        .top-bar {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-
-        .container {
-          display: flex;
-          gap: 30px;
-        }
-
-        .panel {
-          flex: 1;
-          padding: 20px;
-          background: #f4f4f4;
-          border-radius: 8px;
-        }
-
-        label {
-          font-weight: bold;
-          margin-top: 10px;
-          display: block;
-        }
-
-        input, select, textarea {
-          width: 100%;
-          padding: 6px;
-          margin-top: 4px;
-          box-sizing: border-box;
-        }
-
-        textarea {
-          height: 120px;
-          font-family: monospace;
-        }
-
-        .readonly-content {
-          height: 400px;
-        }
-
-        .button {
-          padding: 10px 20px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-
+        .top-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .container { display: flex; gap: 30px; }
+        .panel { flex: 1; padding: 20px; background: #f4f4f4; border-radius: 8px; }
+        label { font-weight: bold; margin-top: 10px; display: block; }
+        input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
+        textarea { height: 120px; font-family: monospace; }
+        .readonly-content { height: 400px; }
+        .button { padding: 10px 20px; font-weight: bold; cursor: pointer; }
         .button.primary { background-color: #007BFF; color: white; border: none; }
         .button.secondary { background-color: #28A745; color: white; border: none; }
     </style>
 </head>
 <body>
 
-<h1>🧠 GOG Studio</h1>
+<h1>GOG Studio</h1>
 
 <form method="POST" enctype="multipart/form-data">
 
-    <!-- 🔹 TOP BAR -->
     <div class="top-bar">
         <input type="file" name="file" accept=".gog">
-        <button class="button primary" type="submit" name="action" value="upload">📤 Upload</button>
-        <button class="button secondary" type="submit" name="action" value="regenerate">🔁 Regenerate</button>
-        <button class="button" type="submit" name="action" value="download">⬇️ Download</button>
+        <button class="button primary" type="submit" name="action" value="upload">Upload</button>
+        <button class="button secondary" type="submit" name="action" value="regenerate">Regenerate</button>
+        <button class="button" type="submit" name="action" value="download">Download</button>
     </div>
 
     <div class="container">
 
-        <!-- 🔹 LEFT PANEL: Editable Fields -->
+        <!-- LEFT PANEL -->
         <div class="panel">
-            <h3>⚙️ Metadata</h3>
+            <h3>Metadata</h3>
+
             <label>Title</label>
-            <input name="meta_title" value="{{ meta.title }}">
+            <label>
+                <input name="meta_title" value="" placeholder="meta.title or 'Enter title'">
+            </label>
 
             <label>Author</label>
-            <input name="meta_author" value="{{ meta.author }}">
+            <label>
+                <input name="meta_author" value="" placeholder="meta.author or 'Enter author'">
+            </label>
 
             <label>Created</label>
-            <input name="meta_created" value="{{ meta.created }}" readonly>
+            <label>
+                <input name="meta_created" value="" placeholder="The date of the creation" readonly>
+            </label>
 
             <label>GPT Engine</label>
-            <select name="meta_gpt_engine">
-               <option> value = "gpt-3.5-turbo" {% if meta.gpt_engine == 'gpt-3.5-turbo' %}selected {% endif %}>gpt-3.5.turbo</option>
-                <option> value = "gpt-4" {% if meta.gpt_engine == 'gpt-4' %}selected {% endif %}>gpt-4</option>
-                <option> value = "gpt-4o" {% if meta.gpt_engine == 'gpt-4-32k' %}selected {% endif %}>gpt-4o</option>
-            </select>
+            <label>
+                <select name="meta_gpt_engine">
+                    <option>gpt-3.5-turbo</option>
+                    <option>gpt-4</option>
+                    <option>gpt-4o</option>
+                </select>
+            </label>
 
-            <h3>🗣️ Prompt</h3>
+            <h3>Prompt</h3>
+
             <label>Audience</label>
-            <input name="prompt_audience" value="{{ prompt.audience }}">
+            <label>
+                <input name="prompt_audience" value="" placeholder="prompt.audience or 'Enter audience'">
+            </label>
 
             <label>Tone</label>
-            <input name="prompt_tone" value="{{ prompt.tone }}">
+            <label>
+                <select name="prompt_tone">
+                    <option>casual</option>
+                    <option>academic</option>
+                    <option>poetic</option>
+                </select>
+            </label>
 
             <label>Format</label>
-            <input name="prompt_format" value="{{ prompt.format }}">
+            <label>
+                <input name="prompt_format" value="" placeholder="Prompt.format or 'Enter format'">
+            </label>
 
             <label>Context</label>
-            <textarea name="prompt_context">{{ prompt.context }}</textarea>
+            <label>
+                <textarea name="prompt_context" placeholder="prompt.context or 'Enter context'"></textarea>
+            </label>
 
             <h3>Render</h3>
+
             <label>Font</label>
-            <select name="render_font">
-                <option>value = "Arial" {% if render.font == 'Arial' %}selected{% endif %}>Arial</option>
-                <option>value = "Courier New" {% if render.font == 'Courier New' %}selected{% endif %}>Courier New</option>
-                <option>value = "Georgia" {% if render.font == 'Georgia' %}selected{% endif %}>Georgia</option>
-                <option>value = "Times New Roman" {% if render.font == 'Times New Roman' %}selected{% endif %}>Times New Roman</option>
-                <option>value = "Verdana" {% if render.font == 'Verdana' %}selected{% endif %}>Verdana</option>
-                <option>value = "Comic Sans MS" {% if render.font == 'Comic Sans MS' %}selected{% endif %}>Comic Sans MS</option>
-                <option>value = "Impact" {% if render.font == 'Impact' %}selected{% endif %}>Impact</option>
-                <option>value = "Tahoma" {% if render.font == 'Tahoma' %}selected{% endif %}>Tahoma</option>
-                <option>value = "Trebuchet MS" {% if render.font == 'Trebuchet MS' %}selected{% endif %}>Trebuchet MS</option>
-                <option>value = "Lucida Console" {% if render.font == 'Lucida Console' %}selected{% endif %}>Lucida Console</option>
-                <option>value = "Palatino Linotype" {% if render.font == 'Palatino Linotype' %}selected{% endif %}>Palatino Linotype</option>
-            </select>
+            <label>
+                <select name="render_font">
+                    <option>Arial</option>
+                    <option>Courier New</option>
+                    <option>Georgia</option>
+                    <option>Times New Roman</option>
+                    <option>Verdana</option>
+                    <option>Comic Sans MS</option>
+                    <option>Impact</option>
+                    <option>Tahoma</option>
+                    <option>Trebuchet MS</option>
+                    <option>Lucida Console</option>
+                    <option>Palatino Linotype</option>
+                </select>
+            </label>
 
             <label>Font Size</label>
-            <select name="render_font_size">
-                <option> value="10" {% if render.font_size == '10' %}selected{% endif %}>10</option>
-                <option> value="12" {% if render.font_size == '12' %}selected{% endif %}>12</option>
-                <option> value="14" {% if render.font_size == '14' %}selected{% endif %}>14</option>
-                <option> value="16" {% if render.font_size == '16' %}selected{% endif %}>16</option>
-                <option> value="18" {% if render.font_size == '18' %}selected{% endif %}>18</option>
-            </select>
+            <label>
+                <select name="render_font_size">
+                    <option>10</option>
+                    <option>12</option>
+                    <option>14</option>
+                    <option>16</option>
+                    <option>18</option>
+                </select>
+            </label>
 
             <label>Layout</label>
-            <input name="render_layout" value="{{ render.layout }}">
+            <label>
+                <input name="render_layout" value="" placeholder="render.layout or 'Enter layout'">
+            </label>
 
             <label>Margin</label>
-            <input name="render_margin" value="{{ render.margin }}">
+            <label>
+                <input name="render_margin" value="" placeholder="Enter margin">
+            </label>
 
             <label>Include Headings</label>
-            <input type="checkbox" name="render_include_headings" {% if render.include_headings %}checked{% endif %}>
+            <label>
+                <input type="checkbox" name="render_include_headings">
+            </label>
         </div>
 
-        <!-- 🔹 RIGHT PANEL: Content Preview -->
-        {% if content.generated %}
+        <!-- RIGHT PANEL -->
         <div class="panel">
-            <h3>📄 Generated Content</h3>
-            <textarea class="readonly-content" readonly>{{ content.value }}</textarea>
+            <h3>Generated Content</h3>
+            <label>
+                <textarea class="readonly-content" readonly>{{ content.value }}</textarea>
+            </label>
         </div>
-        {% endif %}
 
     </div>
 </form>
