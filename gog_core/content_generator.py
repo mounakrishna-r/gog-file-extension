@@ -1,10 +1,10 @@
 from openai import OpenAI
 from .prompt_formatter import format_prompt
 
-def generate_content(api_key, parsed):
+def generate_content(api_key, full_metadata):
     client = OpenAI(api_key=api_key)
-    prompt_text = format_prompt(parsed["prompt"])
-    engine = parsed["meta"].get("gpt_engine", "gpt-3.5-turbo")
+    prompt_text = format_prompt(full_metadata["prompt"])
+    engine = full_metadata["meta"].get("gpt_engine", "gpt-3.5-turbo")
 
     try:
         response = client.chat.completions.create(
@@ -20,11 +20,7 @@ def generate_content(api_key, parsed):
         print(f"Error generating content: {e}")
         return None
 
-def save_gog_file(path, gog_data, content_text):
-    gog_data["content"] = {
-        "generated": True,
-        "value": content_text
-    }
+def save_gog_file(path, gog_file):
     with open(path, 'w') as f:
         import yaml
-        yaml.dump(gog_data, f, sort_keys=False)
+        yaml.dump(gog_file, f, sort_keys=False)

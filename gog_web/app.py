@@ -20,6 +20,8 @@ def home():
     prompt = {}
     render = {}
 
+    gog_dict = {}
+
     if request.method == 'POST':
         action = request.form.get("action")
 
@@ -46,15 +48,15 @@ def home():
                 "audience": request.form.get("prompt_audience", ""),
                 "tone": request.form.get("prompt_tone", ""),
                 "format": request.form.get("prompt_format", ""),
-                "context": request.form.get("prompt_context", "")
+                "context": request.form.get("prompt_context", ""),
+                "include_headings": "render_include_headings" in request.form
             }
 
             render = {
                 "font": request.form.get("render_font", ""),
                 "font_size": request.form.get("render_font_size", ""),
                 "layout": request.form.get("render_layout", ""),
-                "margin": request.form.get("render_margin", ""),
-                "include_headings": "render_include_headings" in request.form
+                "margin": request.form.get("render_margin", "")
             }
 
             gog_dict = {
@@ -64,15 +66,53 @@ def home():
                 "content": {"generated": False, "value": ""}
             }
 
-            prompt_text = format_prompt(meta, prompt, render)
-            result = generate_content(api_key, {"prompt": prompt_text})
+            result = generate_content(api_key, gog_dict)
             gog_dict["content"] = {"generated": True, "value": result}
 
-            save_gog_file("generated.gog", gog_dict)
             content = gog_dict["content"]
 
         elif action == "download":
-            # You can trigger a download later via send_file
-            pass
+            if gog_dict.get("content", {}).get("generated"):
+                save_gog_file("downloaded.gog", gog_dict)
+            else:
+                meta = {
+                    "title": request.form.get("meta_title", ""),
+                    "author": request.form.get("meta_author", ""),
+                    "created": request.form.get("meta_created", ""),
+                    "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
+                }
+
+            prompt = {
+                "audience": request.form.get("prompt_audience", ""),
+                "tone": request.form.get("prompt_tone", ""),
+                "format": request.form.get("prompt_format", ""),
+                "context": request.form.get("prompt_context", ""),
+                "include_headings": "render_include_headings" in request.form
+            }
+
+            render = {
+                "font": request.form.get("render_font", ""),
+                "font_size": request.form.get("render_font_size", ""),
+                "layout": request.form.get("render_layout", ""),
+                "margin": request.form.get("render_margin", "")
+            }
+
+            gog_dict = {
+                "meta": meta,
+                "prompt": prompt,
+                "render": render,
+                "content": {"generated": False, "value": ""}
+            }
+
+            result = generate_content(api_key, gog_dict)
+            gog_dict["content"] = {"generated": True, "value": result}
+
+            content = gog_dict["content"]
+
+            save_gog_file("downloaded.gog", gog_dict)
 
     return render_template("index.html", meta=meta, prompt=prompt, render=render, content=content)
+
+print("🔥 Flask is starting...")
+if __name__ == "__main__":
+    app.run(debug=True)
