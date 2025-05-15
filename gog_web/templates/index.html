@@ -33,6 +33,7 @@
           color: #444;
           margin-bottom: 10px;
         }
+
     </style>
 </head>
 <body>
@@ -40,6 +41,15 @@
 <h1>GOG Studio</h1>
 
 <form method="POST" enctype="multipart/form-data">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul style="color: red; font-weight: bold;">
+        {% for msg in messages %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 
     <!-- 🔹 TOP BAR -->
     <div class="top-bar">
