@@ -83,9 +83,8 @@ def home():
                 "content": content
             }
 
-            gog_file = io.BytesIO()
-            yaml.dump(gog_dict, gog_file, allow_unicode=True)
-            gog_file.seek(0)
+            gog_text = yaml.dump(gog_dict, allow_unicode=True)
+            gog_file = io.BytesIO(gog_text.encode("utf-8"))
 
             return send_file(
                 gog_file,
