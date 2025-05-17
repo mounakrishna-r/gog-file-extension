@@ -25,6 +25,28 @@ def home():
     if request.method == 'POST':
         action = request.form.get("action")
 
+        meta = {
+            "title": request.form.get("meta_title", ""),
+            "author": request.form.get("meta_author", ""),
+            "created": request.form.get("meta_created", ""),
+            "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
+        }
+
+        prompt = {
+            "audience": request.form.get("prompt_audience", ""),
+            "tone": request.form.get("prompt_tone", ""),
+            "format": request.form.get("prompt_format", ""),
+            "context": request.form.get("prompt_context", "")
+        }
+
+        render = {
+            "font": request.form.get("render_font", ""),
+            "font_size": request.form.get("render_font_size", ""),
+            "layout": request.form.get("render_layout", ""),
+            "margin": request.form.get("render_margin", ""),
+            "include_headings": "render_include_headings" in request.form
+        }
+
         if action == "upload":
             file = request.files.get("file")
             if file:
@@ -37,44 +59,40 @@ def home():
                 render = data.get("render", {})
 
         elif action == "regenerate":
-            prompt_context = request.form.get("prompt_context", "").strip()
-            if not prompt_context:
+            if not prompt["context"]:
                 flash("⚠️ Cannot generate content without a context.")
                 return redirect(url_for("home"))
+            result = generate_content(api_key, {
+                "meta": meta,
+                "prompt": prompt,
+                "render": render,
+                "content": content
+            })
+            content = {"generated": True, "value": result}
 
-            meta = {
-                "title": request.form.get("meta_title", ""),
-                "author": request.form.get("meta_author", ""),
-                "created": request.form.get("meta_created", ""),
-                "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
-            }
-
-            prompt = {
-                "audience": request.form.get("prompt_audience", ""),
-                "tone": request.form.get("prompt_tone", ""),
-                "format": request.form.get("prompt_format", ""),
-                "context": prompt_context,
-                "include_headings": "render_include_headings" in request.form
-            }
-
-            render = {
-                "font": request.form.get("render_font", ""),
-                "font_size": request.form.get("render_font_size", ""),
-                "layout": request.form.get("render_layout", ""),
-                "margin": request.form.get("render_margin", "")
+        elif action == "download":
+            content = {
+                "generated": bool(request.form.get("content_value")),
+                "value": request.form.get("content_value", "")
             }
 
             gog_dict = {
                 "meta": meta,
                 "prompt": prompt,
                 "render": render,
-                "content": {"generated": False, "value": ""}
+                "content": content
             }
 
-            result = generate_content(api_key, gog_dict)
-            gog_dict["content"] = {"generated": True, "value": result}
+            gog_file = io.BytesIO()
+            yaml.dump(gog_dict, gog_file, allow_unicode=True)
+            gog_file.seek(0)
 
-            content = gog_dict["content"]
+            return send_file(
+                gog_file,
+                mimetype="application/x-gog",
+                as_attachment=True,
+                download_name=f"{meta['title'] or 'output'}.gog"
+            )
 
     return render_template(
         'index.html',
@@ -82,53 +100,6 @@ def home():
         meta=meta,
         prompt=prompt,
         render=render
-    )
-
-@app.route('/download', methods=['POST'])
-def download():
-    meta = {
-        "title": request.form.get("meta_title", ""),
-        "author": request.form.get("meta_author", ""),
-        "created": request.form.get("meta_created", ""),
-        "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
-    }
-
-    prompt = {
-        "audience": request.form.get("prompt_audience", ""),
-        "tone": request.form.get("prompt_tone", ""),
-        "format": request.form.get("prompt_format", ""),
-        "context": request.form.get("prompt_context", ""),
-        "include_headings": "render_include_headings" in request.form
-    }
-
-    render = {
-        "font": request.form.get("render_font", ""),
-        "font_size": request.form.get("render_font_size", ""),
-        "layout": request.form.get("render_layout", ""),
-        "margin": request.form.get("render_margin", "")
-    }
-
-    content = {
-        "generated": bool(request.form.get("content_value")),
-        "value": request.form.get("content_value", "")
-    }
-
-    gog_dict = {
-        "meta": meta,
-        "prompt": prompt,
-        "render": render,
-        "content": content
-    }
-
-    gog_file = io.BytesIO()
-    yaml.dump(gog_dict, gog_file, allow_unicode=True)
-    gog_file.seek(0)
-
-    return send_file(
-        gog_file,
-        mimetype="application/x-gog",
-        as_attachment=True,
-        download_name=f"{meta['title'] or 'gog_file'}.gog"
     )
 
 if __name__ == "__main__":
