@@ -68,6 +68,9 @@ def home():
                 "render": render,
                 "content": content
             })
+            meta = {"title": meta["title"], "author": meta["author"], "created": meta["created"]}
+            prompt = {"audience": prompt["audience"], "tone": prompt["tone"], "format": prompt["format"], "context": prompt["context"]}
+            render = {"font": render["font"], "font_size": render["font_size"], "layout": render["layout"], "margin": render["margin"], "include_headings": render["include_headings"]}
             content = {"generated": True, "value": result}
 
         elif action == "download":
