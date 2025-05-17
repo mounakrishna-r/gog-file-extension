@@ -1,11 +1,12 @@
 import sys
 import os
+import io
+import yaml
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from flask import Flask, request, render_template, flash, redirect, url_for
-from gog_core.content_generator import generate_content, save_gog_file
+from flask import Flask, request, render_template, flash, redirect, url_for, send_file
+from gog_core.content_generator import generate_content
 from gog_core.gog_parser import parse_gog_file
-from gog_core.prompt_formatter import format_prompt  # ✅ INCLUDED
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,7 +21,6 @@ def home():
     meta = {}
     prompt = {}
     render = {}
-    gog_dict = {}
 
     if request.method == 'POST':
         action = request.form.get("action")
@@ -53,7 +53,7 @@ def home():
                 "audience": request.form.get("prompt_audience", ""),
                 "tone": request.form.get("prompt_tone", ""),
                 "format": request.form.get("prompt_format", ""),
-                "context": request.form.get("prompt_context", ""),
+                "context": prompt_context,
                 "include_headings": "render_include_headings" in request.form
             }
 
@@ -76,50 +76,60 @@ def home():
 
             content = gog_dict["content"]
 
-        elif action == "download":
-            prompt_context = request.form.get("prompt_context", "").strip()
-            if not prompt_context:
-                flash("⚠️ Cannot generate content without a context.")
-                return redirect(url_for("home"))
+    return render_template(
+        'index.html',
+        content=content,
+        meta=meta,
+        prompt=prompt,
+        render=render
+    )
 
-            meta = {
-                "title": request.form.get("meta_title", ""),
-                "author": request.form.get("meta_author", ""),
-                "created": request.form.get("meta_created", ""),
-                "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
-            }
+@app.route('/download', methods=['POST'])
+def download():
+    meta = {
+        "title": request.form.get("meta_title", ""),
+        "author": request.form.get("meta_author", ""),
+        "created": request.form.get("meta_created", ""),
+        "gpt_engine": request.form.get("meta_gpt_engine", "gpt-3.5-turbo")
+    }
 
-            prompt = {
-                "audience": request.form.get("prompt_audience", ""),
-                "tone": request.form.get("prompt_tone", ""),
-                "format": request.form.get("prompt_format", ""),
-                "context": request.form.get("prompt_context", ""),
-                "include_headings": "render_include_headings" in request.form
-            }
+    prompt = {
+        "audience": request.form.get("prompt_audience", ""),
+        "tone": request.form.get("prompt_tone", ""),
+        "format": request.form.get("prompt_format", ""),
+        "context": request.form.get("prompt_context", ""),
+        "include_headings": "render_include_headings" in request.form
+    }
 
-            render = {
-                "font": request.form.get("render_font", ""),
-                "font_size": request.form.get("render_font_size", ""),
-                "layout": request.form.get("render_layout", ""),
-                "margin": request.form.get("render_margin", "")
-            }
+    render = {
+        "font": request.form.get("render_font", ""),
+        "font_size": request.form.get("render_font_size", ""),
+        "layout": request.form.get("render_layout", ""),
+        "margin": request.form.get("render_margin", "")
+    }
 
-            content = {
-                "generated": request.form.get("generated", "false"),
-                "value": request.form.get("generated_content", "")  # 🟡 You must pass this from the HTML as hidden input
-            }
+    content = {
+        "generated": bool(request.form.get("content_value")),
+        "value": request.form.get("content_value", "")
+    }
 
-            gog_dict = {
-                "meta": meta,
-                "prompt": prompt,
-                "render": render,
-                "content": content
-            }
+    gog_dict = {
+        "meta": meta,
+        "prompt": prompt,
+        "render": render,
+        "content": content
+    }
 
-            save_gog_file("downloaded.gog", gog_dict)
+    gog_file = io.BytesIO()
+    yaml.dump(gog_dict, gog_file, allow_unicode=True)
+    gog_file.seek(0)
 
-    return render_template("index.html", meta=meta, prompt=prompt, render=render, content=content)
+    return send_file(
+        gog_file,
+        mimetype="application/x-gog",
+        as_attachment=True,
+        download_name=f"{meta['title'] or 'gog_file'}.gog"
+    )
 
-print("🔥 Flask is starting...")
 if __name__ == "__main__":
     app.run(debug=True)

@@ -76,7 +76,7 @@
             <input name="meta_author" value="" placeholder="{{ meta.author or 'Enter author' }}">
 
             <label>Created</label>
-            <input name="meta_created" value="{{ meta.created }}" readonly>
+            <input name="meta_created" value="{{ meta.created }}">
 
             <label>GPT Engine</label>
             <select name="meta_gpt_engine">
@@ -153,7 +153,7 @@
             {% endif %}
 
             <h3>Generated Content</h3>
-            <textarea class="readonly-content" readonly>{{ content.value }}</textarea>
+            <textarea name="content_value" class="readonly-content" readonly>{{ content.value }}</textarea>
         </div>
     </div>
 </form>
