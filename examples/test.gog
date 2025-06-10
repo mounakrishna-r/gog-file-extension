@@ -1,0 +1,27 @@
+meta:
+  version: '0.1'
+  title: Global warming summary
+  author: ISSO HIGH
+  created: '2025-05-09'
+  gpt_engine: gpt-3.5-turbo
+prompt:
+  context: I am new to jammikunta town, i am from nellore, but would like to know
+    about this place
+  tone: casual
+  audience: only myself
+  format: one paragraph
+render:
+  layout: A4
+  font: Arial
+  font_size: '12'
+  margin: lin
+  include_headings: true
+content:
+  generated: true
+  value: Hey there! So, you're a newbie in Jammikunta, coming all the way from Nellore,
+    huh? Well, welcome to your new town! Jammikunta is a vibrant little place with
+    a unique charm of its own. You'll find friendly locals, bustling markets, and
+    some delicious local cuisine to try out. Don't worry if you feel a bit lost at
+    first, it's all part of the adventure of exploring a new place. Take your time
+    to soak in the sights and sounds of Jammikunta, and before you know it, you'll
+    feel right at home here. Enjoy your new journey!

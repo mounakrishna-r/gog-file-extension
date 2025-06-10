@@ -1,0 +1,23 @@
+meta:
+  version: "1.0"
+  title: "AI and the Future"
+  author: "Isso High"
+  created: "2025-05-09"
+  gpt_engine: "gpt-4"
+
+prompt:
+  context: "Write a short essay on how AI is transforming cities."
+  tone: "Inspiring"
+  audience: "General Public"
+  format: "Essay"
+
+render:
+  layout: "Single Column"
+  font: "Roboto"
+  font_size: "14pt"
+  margin: "1in"
+  include_headings: true
+
+content:
+  generated: False
+  value: ""

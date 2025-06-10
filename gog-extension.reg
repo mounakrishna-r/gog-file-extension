@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\.gog]
+@="GOGFile"
+"Content Type"="application/x-gog"
+
+[HKEY_CLASSES_ROOT\GOGFile]
+@="GOG File"
+"FriendlyTypeName"="GOG File"
+
+[HKEY_CLASSES_ROOT\GOGFile\DefaultIcon]
+@="\"C:\\Path\\To\\gog.ico\",0"
+
+[HKEY_CLASSES_ROOT\GOGFile\shell\open\command]
+@="\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" https://your-app.onrender.com/view?file=%1"

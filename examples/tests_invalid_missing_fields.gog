@@ -1,0 +1,19 @@
+meta:
+  title: "Missing Fields Example"
+
+prompt:
+  context: "Missing required fields."
+  tone: "Neutral"
+  audience: "Dev"
+  format: "Plain"
+
+render:
+  layout: "None"
+  font: "Mono"
+  font_size: "12pt"
+  margin: "1in"
+  include_headings: true
+
+content:
+  generated: "true"
+  value: "This file will fail validation."
