@@ -1,7 +1,8 @@
 import os
+from gog_core.schema_validator import validate_gog_file
 from dotenv import load_dotenv
-from gog_parser import parse_gog_file
-from content_generator import generate_content, save_gog_file
+from gog_core.gog_parser import parse_gog_file
+from gog_core.content_generator import generate_content, save_gog_file
 
 # Load API key
 load_dotenv()
@@ -10,7 +11,7 @@ if not api_key:
     raise ValueError("❌ OPENAI_API_KEY not found in .env file.")
 
 def main():
-    path = "test.gog"
+    path = "examples/test.gog"
     parsed = parse_gog_file(path)
 
     if parsed["content"].get("generated"):
@@ -31,3 +32,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    validate_gog_file("examples/tests_valid.gog")
+    validate_gog_file("examples/tests_invalid_missing_fields.gog")

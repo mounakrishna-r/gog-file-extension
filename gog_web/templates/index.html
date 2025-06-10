@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>GOG Studio</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .buttons { display: flex; gap: 10px; }
+        .container { display: flex; gap: 30px; transition: all 0.3s ease; }
+
+        .panel { flex: 1; padding: 20px; background: #f4f4f4; border-radius: 8px; }
+
+        .metadata-panel.hidden { display: none; }
+
+        label { font-weight: bold; margin-top: 10px; display: block; }
+        input, select, textarea {
+          width: 100%;
+          padding: 6px;
+          margin-top: 4px;
+          box-sizing: border-box;
+        }
+
+        textarea { height: 120px; font-family: monospace; }
+        .readonly-content { height: 400px; }
+
+        .button { padding: 10px 20px; font-weight: bold; cursor: pointer; }
+        .button.primary { background-color: #007BFF; color: white; border: none; }
+        .button.secondary { background-color: #28A745; color: white; border: none; }
+
+        .layout-label {
+          font-size: 14px;
+          color: #444;
+          margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>GOG Studio</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul style="color: red; font-weight: bold;">
+        {% for msg in messages %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- 🔹 TOP BAR -->
+    <div class="top-bar">
+        <div class="buttons">
+            <input type="file" name="file" accept=".gog">
+            <button class="button primary" type="submit" name="action" value="upload">Upload</button>
+            <button class="button secondary" type="submit" name="action" value="regenerate">Regenerate</button>
+            <button class="button" type="submit" name="action" value="download">Download</button>
+        </div>
+        <button type="button" class="button" onclick="toggleMetadata()">🛠 Toggle Metadata</button>
+    </div>
+
+    <!-- 🔹 MAIN CONTAINER -->
+    <div class="container" id="gogContainer">
+
+        <!-- 🧾 Metadata Form -->
+        <div class="panel metadata-panel" id="metadataPanel">
+            <h3>Metadata</h3>
+
+            <label>Title</label>
+            <input name="meta_title" value="" placeholder="{{ meta.title or 'Enter title' }}">
+
+            <label>Author</label>
+            <input name="meta_author" value="" placeholder="{{ meta.author or 'Enter author' }}">
+
+            <label>Created</label>
+            <input name="meta_created" value="{{ meta.created }}">
+
+            <label>GPT Engine</label>
+            <select name="meta_gpt_engine">
+                <option>gpt-3.5-turbo</option>
+                <option>gpt-4</option>
+                <option>gpt-4o</option>
+            </select>
+
+            <h3>Prompt</h3>
+
+            <label>Audience</label>
+            <input name="prompt_audience" value="" placeholder="{{ prompt.audience or 'Enter audience' }}">
+
+            <label>Tone</label>
+            <select name="prompt_tone">
+                <option>casual</option>
+                <option>academic</option>
+                <option>poetic</option>
+            </select>
+
+            <label>Format</label>
+            <input name="prompt_format" value="" placeholder="{{ prompt.format or 'Enter format' }}">
+
+            <label>Context</label>
+            <label>
+                <textarea name="prompt_context" placeholder="{{ prompt.context or 'Enter context' }}"></textarea>
+            </label>
+
+            <h3>Render</h3>
+
+            <label>Font</label>
+            <select name="render_font">
+                <option>Arial</option>
+                <option>Courier New</option>
+                <option>Georgia</option>
+                <option>Times New Roman</option>
+                <option>Verdana</option>
+                <option>Comic Sans MS</option>
+                <option>Impact</option>
+                <option>Tahoma</option>
+                <option>Trebuchet MS</option>
+                <option>Lucida Console</option>
+                <option>Palatino Linotype</option>
+            </select>
+
+            <label>Font Size</label>
+            <select name="render_font_size">
+                <option>10</option>
+                <option>12</option>
+                <option>14</option>
+                <option>16</option>
+                <option>18</option>
+            </select>
+
+            <label>Layout</label>
+            <select name="render_layout" id="layoutSelect" onchange="updateLayoutLabel()">
+                <option>A4</option>
+                <option>A5</option>
+                <option>Letter</option>
+                <option>Legal</option>
+            </select>
+
+            <label>Margin</label>
+            <input name="render_margin" value="" placeholder="{{ render.margin or 'Enter margin' }}">
+
+            <label>Include Headings</label>
+            <input type="checkbox" name="render_include_headings" {% if render.include_headings %}checked{% endif %}>
+        </div>
+
+        <!-- 📄 Generated Content -->
+        <div class="panel">
+            {% if content.generated %}
+            <div class="layout-label" id="layoutLabel">Page: {{ render.layout or 'A4' }} – 210mm x 297mm</div>
+            {% endif %}
+
+            <h3>Generated Content</h3>
+            <label>
+                <textarea name="content_value" class="readonly-content">{{ content.value }}</textarea>
+            </label>
+        </div>
+    </div>
+</form>
+
+<script>
+    function toggleMetadata() {
+      const panel = document.getElementById('metadataPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    function updateLayoutLabel() {
+      const layout = document.getElementById('layoutSelect').value;
+      const label = document.getElementById('layoutLabel');
+      const sizes = {
+        A4: "210mm x 297mm",
+        A5: "148mm x 210mm",
+        Letter: "216mm x 279mm",
+        Legal: "216mm x 356mm"
+      };
+      if (label) {
+        label.innerText = `Page: ${layout} – ${sizes[layout] || "Unknown size"}`;
+      }
+    }
+
+    updateLayoutLabel();
+</script>
+
+</body>
+</html>

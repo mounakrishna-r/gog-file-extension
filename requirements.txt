@@ -1,3 +1,6 @@
 openai
 pyyaml
+jsonschema
 python-dotenv
+gunicorn
+flask

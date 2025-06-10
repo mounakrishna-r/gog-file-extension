@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "GOG File Viewer",
+  "version": "1.0",
+  "description": "Automatically open .gog files in GOG Studio.",
+  "permissions": ["tabs"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Open in GOG Studio"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}

@@ -1,0 +1,43 @@
+# gog_schema.yaml
+type: object
+required:
+  - meta
+  - prompt
+  - render
+  - content
+properties:
+  meta:
+    type: object
+    required: [version, title, author, created, gpt_engine]
+    properties:
+      version: { type: string }
+      title: { type: string }
+      author: { type: string }
+      created: { type: string, format: date }
+      gpt_engine: { type: string }
+
+  prompt:
+    type: object
+    required: [context, tone, audience, format]
+    properties:
+      context: { type: string }
+      tone: { type: string }
+      audience: { type: string }
+      format: { type: string }
+
+  render:
+    type: object
+    required: [layout, font, font_size, margin, include_headings]
+    properties:
+      layout: { type: string }
+      font: { type: string }
+      font_size: { type: string }
+      margin: { type: string }
+      include_headings: { type: boolean }
+
+  content:
+    type: object
+    required: [generated]
+    properties:
+      generated: { type: boolean }
+      value: { type: string }
